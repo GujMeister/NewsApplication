@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct HomeView: View {
-
+    
     // MARK: - Properties
     @EnvironmentObject var homeViewModel: HomeViewModel
-
+    
     // MARK: - Body
     var body: some View {
         ScrollView {
@@ -20,14 +20,9 @@ struct HomeView: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
-
-                if let posterParams = homeViewModel.posterParameters {
-                    Poster(parameters: posterParams)
-                } else {
-                    Text("Loading poster...")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding()
-                }
+                
+                Poster(state: homeViewModel.posterState)
+                    .frame(maxWidth: .infinity)
                 
                 GeometryReader { geometry in
                     RoundedRectangle(cornerRadius: 10)
@@ -36,16 +31,10 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                if !homeViewModel.newsCellParameters.isEmpty {
-                    VStack {
-                        ForEach(homeViewModel.newsCellParameters, id: \.self) { param in
-                            NewsCell(parameters: param)
-                        }
+                VStack {
+                    ForEach(homeViewModel.newsCellStates.indices, id: \.self) { index in
+                        NewsCell(state: homeViewModel.newsCellStates[index])
                     }
-                } else {
-                    Text("Loading articles...")
-                        .frame(maxWidth: .infinity, alignment: .center)
-                        .padding()
                 }
             }
         }

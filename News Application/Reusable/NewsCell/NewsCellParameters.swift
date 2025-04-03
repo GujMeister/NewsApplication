@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+// MARK: - Parameters
+
 extension NewsCell {
-    struct Parameters: Hashable {
+    struct Parameters: Equatable {
         let title: String
         let image: Image
         
@@ -19,13 +21,14 @@ extension NewsCell {
             self.title = title
             self.image = image
         }
-        
-        func hash(into hasher: inout Hasher) {
-            hasher.combine(title)
-        }
-        
-        static func == (lhs: Parameters, rhs: Parameters) -> Bool {
-            lhs.title == rhs.title
-        }
+    }
+}
+
+// MARK: - Loading State
+
+extension NewsCell {
+    enum LoadingState: Equatable {
+        case loading
+        case loaded(Parameters)
     }
 }

@@ -10,27 +10,58 @@ import SwiftUI
 struct NewsCell: View {
     
     // MARK: - Properties
-    private let title: String
-    private let image: Image
+    
+    private let state: LoadingState
     
     // MARK: - Init
     
-    public init(parameters: Parameters) {
-        self.title = parameters.title
-        self.image = parameters.image
+    public init(state: LoadingState) {
+        self.state = state
     }
     
     // MARK: - Body
     
     var body: some View {
         VStack {
-            image
+            Group {
+                switch state {
+                case .loading:
+                    loadingContent
+                case .loaded(let parameters):
+                    loadedContent(parameters: parameters)
+                }
+            }
+            .animation(.default, value: state)
+        }
+    }
+    
+    // MARK: - View States
+    
+    private var loadingContent: some View {
+        VStack {
+            RoundedRectangle(cornerRadius: 25)
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 200)
+                .shimmering()
+            
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 16)
+                .padding(.horizontal)
+                .shimmering()
+        }
+        .padding()
+    }
+    
+    private func loadedContent(parameters: Parameters) -> some View {
+        VStack {
+            parameters.image
                 .resizable()
                 .scaledToFit()
                 .cornerRadius(25)
                 .padding()
             
-            Text(title)
+            Text(parameters.title)
                 .padding(.horizontal)
         }
     }

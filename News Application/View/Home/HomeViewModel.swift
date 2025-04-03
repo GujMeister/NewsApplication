@@ -14,8 +14,8 @@ final class HomeViewModel: ObservableObject {
     private let imageService: ImageFetching
     
     private(set) var articles: [Article] = []
-    @Published var posterParameters: Poster.Parameters?
-    @Published var newsCellParameters: [NewsCell.Parameters] = []
+    @Published var posterState: Poster.LoadingState = .loading
+    @Published var newsCellStates: [NewsCell.LoadingState] = []
     
     init(articleService: ArticleFetching, imageService: ImageFetching) {
         self.articleService = articleService
@@ -23,6 +23,7 @@ final class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Fetch Articles
+    
     internal func fetchArticles() {
         articleService.fetchArticles()
             .receive(on: DispatchQueue.main)
@@ -34,10 +35,6 @@ final class HomeViewModel: ObservableObject {
         if case .failure(let error) = completion {
             DispatchQueue.main.async {
                 print("Article fetch failed: \(error.localizedDescription)")
-                
-                #if DEBUG
-                debugPrint("Full error details:", error)
-                #endif
             }
         }
     }
@@ -50,39 +47,54 @@ final class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Populate Poster
+    
     private func populatePoster() {
-        guard let firstArticle = articles.first else { return }
+        guard let firstArticle = articles.first else {
+            posterState = .error
+            return
+        }
         
         loadImage(for: firstArticle.urlToImage)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] image in
-                self?.posterParameters = Poster.Parameters(
+                let params = Poster.Parameters(
                     title: firstArticle.title ?? "No title",
                     image: image,
                     date: firstArticle.publishedAt ?? "Unknown date"
                 )
+                self?.posterState = .loaded(params)
             }
             .store(in: &cancellables)
     }
     
     // MARK: - Populate News Cells
+    
     private func populateNewsCells() {
-        let publishers = articles.dropFirst()
-            .compactMap { article -> AnyPublisher<NewsCell.Parameters, Never>? in
-                loadImage(for: article.urlToImage)
-                    .map { image in NewsCell.Parameters(title: article.title ?? "No title", image: image) }
-                    .eraseToAnyPublisher()
-            }
+        newsCellStates = Array(repeating: .loading, count: 5)
         
-        guard !publishers.isEmpty else { return }
+        let articlesToShow = articles.dropFirst()
+        var newStates = [NewsCell.LoadingState]()
         
-        Publishers.MergeMany(publishers)
-            .collect()
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] parameters in
-                self?.newsCellParameters = parameters
-            }
-            .store(in: &cancellables)
+        for _ in articlesToShow {
+            newStates.append(.loading)
+        }
+        
+        newsCellStates = newStates
+        
+        articlesToShow.enumerated().forEach { index, article in
+            loadImage(for: article.urlToImage)
+                .receive(on: DispatchQueue.main)
+                .sink { [weak self] image in
+                    let params = NewsCell.Parameters(
+                        title: article.title ?? "No title",
+                        image: image
+                    )
+                    if (0..<(self?.newsCellStates.count ?? 0)).contains(index) {
+                        self?.newsCellStates[index] = .loaded(params)
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
     
     // MARK: - Helper: Load Image

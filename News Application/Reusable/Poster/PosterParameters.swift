@@ -7,8 +7,10 @@
 
 import SwiftUI
 
+// MARK: - Parameters
+
 extension Poster {
-    struct Parameters {
+    struct Parameters: Equatable {
         let title: String
         let image: Image
         let date: String
@@ -22,5 +24,15 @@ extension Poster {
             self.image = image
             self.date = date
         }
+    }
+}
+
+// MARK: - Loading State
+
+extension Poster {
+    enum LoadingState: Equatable {
+        case loading
+        case loaded(Parameters)
+        case error
     }
 }
