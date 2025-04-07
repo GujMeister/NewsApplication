@@ -49,13 +49,3 @@ final class ResponseValidator: ResponseValidating {
         }
     }
 }
-
-extension Network {
-    static func createDefaultValidator() -> ResponseValidating {
-        return ResponseValidator()
-    }
-    
-    static func createValidator(withAcceptableStatusCodes acceptableStatusCodes: Range<Int>) -> ResponseValidating {
-        return ResponseValidator(acceptableStatusCodes: acceptableStatusCodes)
-    }
-}
