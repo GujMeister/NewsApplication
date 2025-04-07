@@ -24,8 +24,8 @@ final class HomeViewModel: ObservableObject {
     
     // MARK: - Fetch Articles
     
-    internal func fetchArticles() {
-        articleService.fetchArticles()
+    func fetchArticles(with query: NewsQuery = NewsQuery(category: NewsQuery.Category.general.rawValue)) {
+        articleService.fetchArticles(with: query)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: handleCompletion, receiveValue: handleArticles)
             .store(in: &cancellables)
