@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol NetworkService {
-    func getArticles() -> AnyPublisher<[Article], NetworkError>
+    func getArticles(query: NewsQuery) -> AnyPublisher<[Article], NetworkError>
 }
 
 final class Network: NetworkService {
@@ -27,15 +27,18 @@ final class Network: NetworkService {
     
     // MARK: - API Methods
     
-    func getArticles() -> AnyPublisher<[Article], NetworkError> {
+    func getArticles(query: NewsQuery) -> AnyPublisher<[Article], NetworkError> {
         guard var urlComponents = URLComponents(string: baseURL) else {
             return Fail(error: .invalidURL).eraseToAnyPublisher()
         }
         
-        urlComponents.queryItems = [
-            URLQueryItem(name: "country", value: "us"),
+        var queryItems = [
             URLQueryItem(name: "apiKey", value: apiKey)
         ]
+        
+        queryItems.append(contentsOf: query.queryItems)
+        
+        urlComponents.queryItems = queryItems
         
         guard let url = urlComponents.url else {
             return Fail(error: .invalidURL).eraseToAnyPublisher()
@@ -69,5 +72,15 @@ final class Network: NetworkService {
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
+    }
+}
+
+extension Network {
+    static func createDefaultValidator() -> ResponseValidating {
+        return ResponseValidator()
+    }
+    
+    static func createValidator(withAcceptableStatusCodes acceptableStatusCodes: Range<Int>) -> ResponseValidating {
+        return ResponseValidator(acceptableStatusCodes: acceptableStatusCodes)
     }
 }
