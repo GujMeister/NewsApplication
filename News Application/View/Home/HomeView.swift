@@ -11,6 +11,7 @@ struct HomeView: View {
     
     // MARK: - Properties
     @EnvironmentObject var homeViewModel: HomeViewModel
+    @State private var selectedCategory: NewsQuery.Category = .general
     
     // MARK: - Body
     var body: some View {
@@ -20,6 +21,11 @@ struct HomeView: View {
                     .font(.largeTitle)
                     .bold()
                     .padding(.horizontal)
+                
+                CategoryMenuView(
+                    categories: NewsQuery.Category.allCases,
+                    selectedCategory: $selectedCategory
+                )
                 
                 Poster(state: homeViewModel.posterState)
                     .frame(maxWidth: .infinity)
@@ -40,6 +46,9 @@ struct HomeView: View {
         }
         .onAppear {
             homeViewModel.fetchArticles()
+        }
+        .onChange(of: selectedCategory) { newCategory in
+            homeViewModel.fetchArticles(with: NewsQuery(category: selectedCategory.rawValue))
         }
     }
 }
