@@ -37,7 +37,7 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity, alignment: .center)
                 }
                 
-                VStack {
+                LazyVStack {
                     ForEach(homeViewModel.newsCellStates.indices, id: \.self) { index in
                         NewsCell(state: homeViewModel.newsCellStates[index])
                     }

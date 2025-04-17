@@ -1,5 +1,5 @@
 //
-//  Articles.swift
+//  Response.swift
 //  News Application
 //
 //  Created by Luka Gujejiani on 12.03.25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - Articles
+// MARK: - Response
 struct Response: Decodable {
     let status: String?
     let totalResults: Double?
