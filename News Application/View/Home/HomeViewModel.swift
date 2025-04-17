@@ -13,7 +13,7 @@ final class HomeViewModel: ObservableObject {
     private let articleService: ArticleFetching
     private let imageService: ImageFetching
     
-    private(set) var articles: [Article] = []
+    private(set) var articles: [Response.Article] = []
     @Published var posterState: Poster.LoadingState = .loading
     @Published var newsCellStates: [NewsCell.LoadingState] = []
     
@@ -39,7 +39,7 @@ final class HomeViewModel: ObservableObject {
         }
     }
     
-    private func handleArticles(_ articles: [Article]) {
+    private func handleArticles(_ articles: [Response.Article]) {
         guard !articles.isEmpty else { return }
         self.articles = articles
         populatePoster()
