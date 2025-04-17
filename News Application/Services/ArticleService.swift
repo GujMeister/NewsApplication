@@ -9,7 +9,7 @@ import Combine
 
 // MARK: - Protocols
 protocol ArticleFetching {
-    func fetchArticles(with query: NewsQuery) -> AnyPublisher<[Article], NetworkError>
+    func fetchArticles(with query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError>
 }
 
 // MARK: - Article Service
@@ -20,7 +20,7 @@ final class ArticleService: ArticleFetching {
         self.network = network
     }
 
-    func fetchArticles(with query: NewsQuery) -> AnyPublisher<[Article], NetworkError> {
+    func fetchArticles(with query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError> {
         return network.getArticles(query: query)
     }
 }
