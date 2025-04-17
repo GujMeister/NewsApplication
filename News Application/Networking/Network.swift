@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 let apiKey = "04bda797a49346e4aca004ee3402281b"
+let path = "/v2/top-headlines"
 let domain = "newsapi.org"
 
 protocol NetworkService {
@@ -17,7 +18,7 @@ protocol NetworkService {
         queryItems: [URLQueryItem],
         responseType: Result.Type
     ) -> AnyPublisher<Result, NetworkError>
-    func getArticles(query: NewsQuery) -> AnyPublisher<[Article], NetworkError>
+    func getArticles(query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError>
 }
 
 final class Network: NetworkService {
@@ -31,6 +32,7 @@ final class Network: NetworkService {
     }
     
     // MARK: API Methods
+    
     func executeNetworkCall<Result : Decodable>(
         path: String,
         queryItems: [URLQueryItem] = [],
@@ -68,8 +70,7 @@ final class Network: NetworkService {
             .eraseToAnyPublisher()
     }
     
-    
-    func getArticles(query: NewsQuery) -> AnyPublisher<[Article], NetworkError> {
+    func getArticles(query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError> {
         var items = [ URLQueryItem(name: "apiKey", value: apiKey) ]
         
         if let country = query.country {
@@ -85,11 +86,20 @@ final class Network: NetworkService {
         }
         
         return executeNetworkCall(
-            path: "/v2/top-headlines",
+            path: path,
             queryItems: items,
             responseType: Response.self
         )
         .map(\.articles)
+        .map { articles in
+              articles.filter { article in
+                article.author      != nil &&
+                article.title       != nil &&
+                article.urlToImage  != nil &&
+                article.publishedAt != nil &&
+                article.content     != nil
+              }
+        }
         .eraseToAnyPublisher()
     }
 }
