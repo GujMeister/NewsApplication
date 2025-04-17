@@ -10,7 +10,7 @@ import Foundation
 struct NewsQuery {
     let country: String?
     let category: String?
-    let language: String?
+    let page: Int?
     
     enum Category: String {
         case general
@@ -22,16 +22,13 @@ struct NewsQuery {
         case technology
     }
     
-    enum Language: String {
-        case ar, de, en, es, fr, he, it, nl, no, pt, ru, sv, ud, zh
-    }
-    
     init(country: String? = "us",
          category: String? = nil,
-         language: String? = nil) {
+         page: Int? = nil
+    ) {
         self.country = country
         self.category = category
-        self.language = language
+        self.page = page
     }
     
     var queryItems: [URLQueryItem] {
@@ -45,8 +42,8 @@ struct NewsQuery {
             items.append(URLQueryItem(name: "category", value: category))
         }
         
-        if let language = language {
-            items.append(URLQueryItem(name: "language", value: language))
+        if let page = page {
+            items.append(.init(name: "page", value: String(page)))
         }
         
         return items

@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Articles
-struct Articles: Decodable {
+struct Response: Decodable {
     let status: String?
     let totalResults: Double?
     let articles: [Article]

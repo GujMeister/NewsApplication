@@ -47,7 +47,7 @@ struct HomeView: View {
         .onAppear {
             homeViewModel.fetchArticles()
         }
-        .onChange(of: selectedCategory) { newCategory in
+        .onChange(of: selectedCategory) {
             homeViewModel.fetchArticles(with: NewsQuery(category: selectedCategory.rawValue))
         }
     }
