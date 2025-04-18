@@ -12,14 +12,14 @@ import SwiftUI
 extension NewsCell {
     struct Parameters: Equatable {
         let title: String
-        let image: Image
+        let URL: URL
         
         public init(
             title: String,
-            image: Image
+            URL: URL
         ) {
             self.title = title
-            self.image = image
+            self.URL = URL
         }
     }
 }

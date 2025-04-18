@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Resolver
 
 let apiKey = "04bda797a49346e4aca004ee3402281b"
 let path = "/v2/top-headlines"
@@ -18,26 +19,20 @@ protocol NetworkService {
         queryItems: [URLQueryItem],
         responseType: Result.Type
     ) -> AnyPublisher<Result, NetworkError>
-    func getArticles(query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError>
 }
 
 final class Network: NetworkService {
     
-    // MARK: Properties
-    private let responseValidator: ResponseValidating
-    
-    // MARK: Init
-    init(responseValidator: ResponseValidating = Network.createDefaultValidator()) {
-        self.responseValidator = responseValidator
-    }
-    
-    // MARK: API Methods
+    @Injected private var responseValidator: ResponseValidating
     
     func executeNetworkCall<Result : Decodable>(
         path: String,
         queryItems: [URLQueryItem] = [],
         responseType: Result.Type
     ) -> AnyPublisher<Result, NetworkError> {
+        
+        print("Making request to: \(path)")
+        print("Network - executeNetworkCall")
         
         var components = URLComponents()
         components.scheme     = "https"
@@ -68,39 +63,6 @@ final class Network: NetworkService {
             }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-    }
-    
-    func getArticles(query: NewsQuery) -> AnyPublisher<[Response.Article], NetworkError> {
-        var items = [ URLQueryItem(name: "apiKey", value: apiKey) ]
-        
-        if let country = query.country {
-            items.append(.init(name: "country", value: country))
-        }
-        
-        if let category = query.category {
-            items.append(.init(name: "category", value: category))
-        }
-        
-        if let page = query.page {
-            items.append(.init(name: "page", value: String(page)))
-        }
-        
-        return executeNetworkCall(
-            path: path,
-            queryItems: items,
-            responseType: Response.self
-        )
-        .map(\.articles)
-        .map { articles in
-              articles.filter { article in
-                article.author      != nil &&
-                article.title       != nil &&
-                article.urlToImage  != nil &&
-                article.publishedAt != nil &&
-                article.content     != nil
-              }
-        }
-        .eraseToAnyPublisher()
     }
 }
 

@@ -6,63 +6,37 @@
 //
 
 import SwiftUI
+import Combine
+import Resolver
 
 struct NewsCell: View {
+    private let article: Article
+    @State private var image: Image = Image(systemName: "photo.fill")
+    @Injected private var imageService: ImageFetching
     
-    // MARK: - Properties
-    
-    private let state: LoadingState
-    
-    // MARK: - Init
-    
-    public init(state: LoadingState) {
-        self.state = state
+    public init(article: Article) {
+        self.article = article
     }
-    
-    // MARK: - Body
     
     var body: some View {
         VStack {
-            Group {
-                switch state {
-                case .loading:
-                    loadingContent
-                case .loaded(let parameters):
-                    loadedContent(parameters: parameters)
-                }
-            }
-            .animation(.default, value: state)
-        }
-    }
-    
-    // MARK: - View States
-    
-    private var loadingContent: some View {
-        VStack {
-            RoundedRectangle(cornerRadius: 25)
-                .fill(Color.gray.opacity(0.3))
-                .frame(height: 200)
-                .shimmering()
-            
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color.gray.opacity(0.3))
-                .frame(height: 16)
-                .padding(.horizontal)
-                .shimmering()
-        }
-        .padding()
-    }
-    
-    private func loadedContent(parameters: Parameters) -> some View {
-        VStack {
-            parameters.image
+            image
                 .resizable()
                 .scaledToFit()
                 .cornerRadius(25)
                 .padding()
             
-            Text(parameters.title)
+            Text(article.title)
+                .font(.headline)
                 .padding(.horizontal)
         }
+        .onReceive(
+            imageService
+                .fetchImage(from: article.imageURL)
+                .receive(on: DispatchQueue.main)
+        ) { fetchedImage in
+            self.image = fetchedImage
+        }
+        .padding(.vertical, 8)
     }
 }

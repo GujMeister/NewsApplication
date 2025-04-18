@@ -15,7 +15,7 @@ struct CategoryMenuView: View {
     
     let categories: [NewsQuery.Category]
     @Binding var selectedCategory: NewsQuery.Category
-
+    
     // MARK: Body
     
     var body: some View {
@@ -64,7 +64,7 @@ struct CategoryCell: View {
 
 struct CategoryMenuView_Previews: PreviewProvider {
     @State static var selectedCategory: NewsQuery.Category = .general
-
+    
     static var previews: some View {
         CategoryMenuView(
             categories: NewsQuery.Category.allCases,

@@ -1,14 +1,11 @@
 //
-//  Response.swift
+//  ArticleDTO.swift
 //  News Application
 //
-//  Created by Luka Gujejiani on 12.03.25.
+//  Created by Luka Gujejiani on 17.04.25.
 //
 
-import Foundation
-
-// MARK: - Response
-struct Response: Decodable {
+struct ArticleDTO: Decodable {
     let articles: [Article]
     
     struct Article: Decodable {
