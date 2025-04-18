@@ -10,27 +10,33 @@ import SwiftUI
 struct HomeView: View {
     @StateObject private var vm = HomeViewModel()
     @State private var selectedCategory: NewsQuery.Category = .general
-    
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                headerView
-                List(vm.articles) { article in
+                HeaderView
+
+                List {
+                  ForEach(vm.articles) { article in
                     NewsCell(article: article)
-                        .listRowSeparator(.hidden)
+                      .listRowSeparator(.hidden)
+                      .onAppear {
+                        vm.loadMoreIfNeeded(currentItem: article)
+                      }
+                  }
                 }
                 .listStyle(.plain)
             }
             .onAppear {
-                vm.fetchArticles(category: selectedCategory)
+                vm.fetchArticles(category: selectedCategory, page: 1)
             }
             .onChange(of: selectedCategory) { newCat in
-                vm.fetchArticles(category: newCat)
+                vm.fetchArticles(category: newCat, page: 1)
             }
         }
     }
-    
-    private var headerView: some View {
+
+    private var HeaderView: some View {
         VStack(spacing: 12) {
             Text("Top Story")
                 .font(.largeTitle).bold()

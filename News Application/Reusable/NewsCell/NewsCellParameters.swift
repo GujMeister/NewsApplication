@@ -29,6 +29,7 @@ extension NewsCell {
 extension NewsCell {
     enum LoadingState: Equatable {
         case loading
+        case loadingFailed
         case loaded(Parameters)
     }
 }

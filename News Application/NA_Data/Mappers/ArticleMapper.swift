@@ -13,17 +13,25 @@ struct ArticleMapper {
         return f
     }()
     
-    func toDomain(_ dto: ArticleDTO.Article) -> Article {
-        let imageURL = URL(string: dto.urlToImage ?? "" ) ?? URL(string: "about:blank")!
+    func toDomain(_ dto: ArticleDTO.Article) -> Article? {
+        guard
+            let author      = dto.author,
+            let title       = dto.title,
+            let imageURLStr = dto.urlToImage,
+            let dateStr     = dto.publishedAt,
+            let content     = dto.content
+        else { return nil }
         
-        let publishedDate = isoFormatter.date(from: dto.publishedAt!) ?? Date()
+        guard let imageURL = URL(string: imageURLStr) else { return nil }
+        
+        guard let publishedDate = isoFormatter.date(from: dateStr) else { return nil }
         
         return Article(
-            author:      dto.author ?? "NO AUTHOR",
-            title:       dto.title ?? "NO TITLE",
+            author:      author,
+            title:       title,
             imageURL:    imageURL,
             publishedAt: publishedDate,
-            content:     dto.content ?? "NO CONTENT"
+            content:     content
         )
     }
 }
