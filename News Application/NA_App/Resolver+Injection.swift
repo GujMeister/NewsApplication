@@ -12,6 +12,7 @@ extension Resolver: @retroactive ResolverRegistering {
     public static func registerAllServices() {
         register { ResponseValidator() as ResponseValidating }
         register { Network()           as NetworkService    }
+        register { ImageService() as ImageFetching }
         register { ArticleRemoteDataSourceImpl() }
             .implements(ArticleRemoteDataSource.self)
         register { ArticleRepository() }
@@ -19,8 +20,8 @@ extension Resolver: @retroactive ResolverRegistering {
         register { @MainActor in
             HomeViewModel()
         }
-        register { ImageService() as ImageFetching }
-        register { ImageDownloader() }
-            .scope(.shared)
+//        register { ImageService() as ImageFetching }
+//        register { ImageDownloader() }
+//            .scope(.shared)
     }
 }

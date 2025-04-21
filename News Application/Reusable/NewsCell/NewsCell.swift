@@ -6,37 +6,53 @@
 //
 
 import SwiftUI
-import Combine
-import Resolver
 
 struct NewsCell: View {
-    private let article: Article
-    @State private var image: Image = Image(systemName: "photo.fill")
-    @Injected private var imageService: ImageFetching
     
-    public init(article: Article) {
-        self.article = article
+    // MARK: Properties
+    
+    @StateObject var vm: NewsCellViewModel
+    @EnvironmentObject private var homeVM: HomeViewModel
+    
+    // MARK: Init
+    
+    init(vm: NewsCellViewModel) {
+        _vm = StateObject(wrappedValue: vm)
     }
+    
+    // MARK: Body
     
     var body: some View {
         VStack {
-            image
-                .resizable()
-                .scaledToFit()
-                .cornerRadius(25)
-                .padding()
+            switch vm.state {
+            case .loading:
+                RoundedRectangle(cornerRadius: 25)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(height: 200)
+                    .shimmering()
+                    .padding()
+                
+            case .loaded(let image):
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .cornerRadius(25)
+                    .padding()
+                
+            case .failed:
+                Color.clear
+                    .onAppear {
+                        homeVM.remove(vm.id)
+                    }
+            }
             
-            Text(article.title)
+            Text(vm.title)
                 .font(.headline)
                 .padding(.horizontal)
         }
-        .onReceive(
-            imageService
-                .fetchImage(from: article.imageURL)
-                .receive(on: DispatchQueue.main)
-        ) { fetchedImage in
-            self.image = fetchedImage
-        }
         .padding(.vertical, 8)
+        .onChange(of: vm.id) {
+            vm.loadImage()
+        }
     }
 }

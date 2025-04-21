@@ -31,7 +31,6 @@ final class Network: NetworkService {
         responseType: Result.Type
     ) -> AnyPublisher<Result, NetworkError> {
         
-        print("Making request to: \(path)")
         print("Network - executeNetworkCall")
         
         var components = URLComponents()
@@ -45,7 +44,7 @@ final class Network: NetworkService {
         }
         
         let request = URLRequest(url: url)
-        
+        print("Making request to: \(request)")
         return URLSession.shared
             .dataTaskPublisher(for: request)
             .tryMap { [validator = responseValidator] data, response in

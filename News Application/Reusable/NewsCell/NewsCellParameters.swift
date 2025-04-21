@@ -13,13 +13,12 @@ extension NewsCell {
     struct Parameters: Equatable {
         let title: String
         let URL: URL
-        
-        public init(
-            title: String,
-            URL: URL
-        ) {
+        let image: Image
+
+        public init(title: String, URL: URL, image: Image) {
             self.title = title
-            self.URL = URL
+            self.URL   = URL
+            self.image = image
         }
     }
 }
@@ -27,9 +26,9 @@ extension NewsCell {
 // MARK: - Loading State
 
 extension NewsCell {
-    enum LoadingState: Equatable {
+    enum LoadingState {
         case loading
-        case loadingFailed
-        case loaded(Parameters)
+        case loaded(Image)
+        case failed
     }
 }

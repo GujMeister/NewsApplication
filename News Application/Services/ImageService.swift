@@ -13,14 +13,36 @@ protocol ImageFetching {
     func fetchImage(from url: URL) -> AnyPublisher<Image, Never>
 }
 
-// MARK: - Image Service
 final class ImageService: ImageFetching {
-    @Injected private var downloader: ImageDownloader
-    
+    @Injected private var responseValidator: ResponseValidating
+
+    private lazy var session: URLSession = {
+        let config = URLSessionConfiguration.default
+        config.waitsForConnectivity = true
+        return URLSession(configuration: config)
+    }()
+
     func fetchImage(from url: URL) -> AnyPublisher<Image, Never> {
-        return downloader
-            .downloadImage(from: url)
-            .replaceError(with: Image(systemName: "photo.fill"))
+        let urlString = url.absoluteString
+        guard let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let safeURL = URL(string: encodedString) else {
+            return Just(Image(systemName: "exclamationmark.triangle.fill"))
+                .eraseToAnyPublisher()
+        }
+
+        return session
+            .dataTaskPublisher(for: safeURL)
+            .timeout(.seconds(5), scheduler: DispatchQueue.global(), customError: { URLError(.timedOut) })
+            .retry(1)
+            .tryMap { data, response in
+                try self.responseValidator.validate(response)
+                guard let ui = UIImage(data: data) else {
+                    throw URLError(.cannotDecodeContentData)
+                }
+                return Image(uiImage: ui)
+            }
+            .replaceError(with: Image(systemName: "exclamationmark.triangle.fill"))
+            .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
 }

@@ -16,7 +16,7 @@ extension View {
 }
 
 struct ShimmerEffect: ViewModifier {
-    @State private var phase: CGFloat = 0
+    @State private var phase: CGFloat = 10
     
     func body(content: Content) -> some View {
         content
@@ -24,7 +24,7 @@ struct ShimmerEffect: ViewModifier {
                 LinearGradient(
                     gradient: Gradient(colors: [
                         .clear,
-                        .blue.opacity(0.6),
+                        .blue.opacity(0.3),
                         .clear
                     ]),
                     startPoint: .leading,
@@ -33,7 +33,7 @@ struct ShimmerEffect: ViewModifier {
                 .mask(content)
                 .offset(x: phase)
                 .animation(
-                    .linear(duration: 1.5)
+                    .linear(duration: 3)
                     .repeatForever(autoreverses: false),
                     value: phase
                 )
