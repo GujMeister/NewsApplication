@@ -14,45 +14,45 @@ final class NewsCellViewModel: ObservableObject, Identifiable {
     // MARK: Properties
     
     let id: UUID
+    let article: Article
     @Published private(set) var state: LoadingState = .loading
-
+    
     // MARK: Private
     
-    private let article: Article
     private let imageService: ImageFetching
     private var cancellable: AnyCancellable?
-
+    
     // MARK: Init
     
     init(article: Article,
          imageService: ImageFetching = Resolver.resolve()) {
-      self.article = article
-      self.id = article.id
-      self.imageService = imageService
-      loadImage()
+        self.article = article
+        self.id = article.id
+        self.imageService = imageService
+        loadImage()
     }
-
+    
     var title: String { article.title }
-
+    
     // MARK: Methods
     
     func loadImage() {
-      state = .loading
-
-      cancellable = imageService
-        .fetchImage(from: article.imageURL)
-        .tryMap { img in
-          if img == Image(systemName: "exclamationmark.triangle.fill") {
-            throw URLError(.resourceUnavailable)
-          }
-          return img
-        }
-        .map(LoadingState.loaded)
-        .catch { _ in Just(.failed) }
-        .receive(on: DispatchQueue.main)
-        .sink { [weak self] newState in
-          self?.state = newState
-        }
+        state = .loading
+        
+        cancellable = imageService
+            .fetchImage(from: article.imageURL)
+            .tryMap { img in
+                if img == Image(systemName: "exclamationmark.triangle.fill") {
+                    throw URLError(.resourceUnavailable)
+                }
+                return img
+            }
+            .map(LoadingState.loaded)
+            .catch { _ in Just(.failed) }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newState in
+                self?.state = newState
+            }
     }
 }
 

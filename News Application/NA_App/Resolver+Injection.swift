@@ -13,15 +13,10 @@ extension Resolver: @retroactive ResolverRegistering {
         register { ResponseValidator() as ResponseValidating }
         register { Network()           as NetworkService    }
         register { ImageService() as ImageFetching }
-        register { ArticleRemoteDataSourceImpl() }
-            .implements(ArticleRemoteDataSource.self)
-        register { ArticleRepository() }
-            .implements(FetchArticlesUseCase.self)
+        register { ArticleRemoteDataSourceImpl() as ArticleRemoteDataSource }
+        register { ArticleRepository() as FetchArticlesUseCase }
         register { @MainActor in
             HomeViewModel()
         }
-//        register { ImageService() as ImageFetching }
-//        register { ImageDownloader() }
-//            .scope(.shared)
     }
 }

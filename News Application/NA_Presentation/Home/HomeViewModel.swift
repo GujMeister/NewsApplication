@@ -19,6 +19,7 @@ class HomeViewModel: ObservableObject {
     private var articles: [Article] = []
     
     @Published var cellViewModels: [NewsCellViewModel] = []
+    @Published var detailsViewModel: DetailsViewModel?
     @Published var pagination: Int = 1
     @Published var selectedCategory: NewsQuery.Category = .general
     

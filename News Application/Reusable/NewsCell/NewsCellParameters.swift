@@ -14,7 +14,7 @@ extension NewsCell {
         let title: String
         let URL: URL
         let image: Image
-
+        
         public init(title: String, URL: URL, image: Image) {
             self.title = title
             self.URL   = URL

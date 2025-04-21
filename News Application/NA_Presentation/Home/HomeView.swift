@@ -21,12 +21,16 @@ struct HomeView: View {
                 HeaderView
                 
                 List {
-                    ForEach(vm.cellViewModels) { cellVM in
-                        NewsCell(vm: cellVM)
-                            .listRowSeparator(.hidden)
-                            .onAppear {
-                                vm.loadMoreIfNeeded(currentItemID: cellVM.id)
-                            }
+                    ForEach(vm.cellViewModels) { viewModel in
+                        NavigationLink {
+                            DetailsView(vm: DetailsViewModel(article: viewModel.article))
+                        } label: {
+                            NewsCell(vm: viewModel)
+                                .listRowSeparator(.hidden)
+                                .onAppear {
+                                    vm.loadMoreIfNeeded(currentItemID: viewModel.id)
+                                }
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -34,8 +38,8 @@ struct HomeView: View {
             .onAppear {
                 vm.fetchArticles(category: vm.selectedCategory, page: 1)
             }
-            .onChange(of: vm.selectedCategory) { newCat in
-                vm.fetchArticles(category: newCat, page: 1)
+            .onChange(of: vm.selectedCategory) {
+                vm.fetchArticles(category: vm.selectedCategory, page: 1)
             }
         }
         .environmentObject(vm)
