@@ -13,7 +13,7 @@ extension Resolver: @retroactive ResolverRegistering {
         register { ResponseValidator() as ResponseValidating }
         register { Network()           as NetworkService    }
         register { ImageService() as ImageFetching }
-        register { ArticleDataSourceImpl() as ArticleDataSource }
+        register { RemoteArticleDataSource() as ArticleDataSource }
         register { ArticleRepository() as ArticleRepositoryProtocol }
         register { FetchArticlesUseImpl() as FetchArticlesUseCase }
         register { @MainActor in
