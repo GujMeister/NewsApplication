@@ -12,20 +12,17 @@ struct ArticleMapper {
         guard
             let author      = dto.author,
             let title       = dto.title,
-            let imageURLStr = dto.urlToImage,
-            let dateStr     = dto.publishedAt,
+            let image       = dto.urlToImage,
             let content     = dto.content
         else { return nil }
         
-        guard let imageURL = URL(string: imageURLStr) else { return nil }
-        
-        guard let publishedDate = ISO8601DateFormatter().date(from: dateStr) else { return nil }
+        guard let imageURL = URL(string: image) else { return nil }
         
         return Article(
             author:      author,
             title:       title,
             imageURL:    imageURL,
-            publishedAt: publishedDate,
+            publishedAt: dto.publishedAt,
             content:     content
         )
     }
