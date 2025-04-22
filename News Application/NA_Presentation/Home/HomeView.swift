@@ -34,6 +34,9 @@ struct HomeView: View {
                     }
                 }
                 .listStyle(.plain)
+                .refreshable {
+                    vm.refresh(category: vm.selectedCategory)
+                }
             }
             .onAppear {
                 vm.fetchArticles(category: vm.selectedCategory, page: 1)
@@ -56,12 +59,13 @@ extension HomeView {
         VStack(spacing: 12) {
             Text("Top Story")
                 .font(.largeTitle).bold()
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 16)
             CategoryMenuView(
                 categories: NewsQuery.Category.allCases,
                 selectedCategory: $vm.selectedCategory
             )
         }
-        .padding()
         .background(Color(.systemBackground))
     }
 }

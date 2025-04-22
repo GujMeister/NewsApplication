@@ -75,4 +75,12 @@ class HomeViewModel: ObservableObject {
             selectedCategory = category
         }
     }
+    
+    func refresh(category: NewsQuery.Category) {
+        articles = []
+        cellViewModels = []
+        selectedCategory = category
+        
+        fetchArticles(category: category)
+    }
 }

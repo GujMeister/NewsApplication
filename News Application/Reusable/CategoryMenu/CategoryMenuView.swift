@@ -32,6 +32,7 @@ struct CategoryMenuView: View {
                 }
             }
             .padding(.horizontal)
+            .padding(.bottom, 4)
         }
     }
 }
