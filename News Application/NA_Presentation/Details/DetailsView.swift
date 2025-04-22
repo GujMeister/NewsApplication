@@ -47,6 +47,8 @@ struct DetailsView: View {
                 }
                 
                 Text(vm.article.content)
+                Text(vm.article.publishedAt.formatted())
+                    .foregroundStyle(.secondary)
             }
             .padding()
         }
