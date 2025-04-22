@@ -26,6 +26,8 @@ final class ImageService: ImageFetching {
         let urlString = url.absoluteString
         guard let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let safeURL = URL(string: encodedString) else {
+//            return Fail(error: NetworkError.badResponse)
+//                .eraseToAnyPublisher()
             return Just(Image(systemName: "exclamationmark.triangle.fill"))
                 .eraseToAnyPublisher()
         }

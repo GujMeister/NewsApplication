@@ -8,7 +8,7 @@
 import Foundation
 
 struct Article: Identifiable {
-    let id: UUID = UUID()
+    var id: String { author } //UUID = UUID()
     let author: String
     let title: String
     let imageURL: URL

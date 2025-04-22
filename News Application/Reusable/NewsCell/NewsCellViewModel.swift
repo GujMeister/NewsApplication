@@ -13,22 +13,22 @@ final class NewsCellViewModel: ObservableObject, Identifiable {
     
     // MARK: Properties
     
-    let id: UUID
+    let id: String
     let article: Article
     @Published private(set) var state: LoadingState = .loading
     
     // MARK: Private
     
-    private let imageService: ImageFetching
+    @Injected
+    private var imageService: ImageFetching
+
     private var cancellable: AnyCancellable?
     
     // MARK: Init
     
-    init(article: Article,
-         imageService: ImageFetching = Resolver.resolve()) {
+    init(article: Article) {
         self.article = article
         self.id = article.id
-        self.imageService = imageService
         loadImage()
     }
     

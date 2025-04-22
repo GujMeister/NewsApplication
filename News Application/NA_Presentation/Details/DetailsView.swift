@@ -47,7 +47,6 @@ struct DetailsView: View {
                 }
                 
                 Text(vm.article.content)
-                    .font(.body)
             }
             .padding()
         }

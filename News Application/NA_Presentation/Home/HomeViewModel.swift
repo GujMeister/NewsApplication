@@ -26,11 +26,7 @@ class HomeViewModel: ObservableObject {
     // MARK: Methods
     
     func fetchArticles(category: NewsQuery.Category, page: Int = 1) {
-        if page == 1 {
-            articles = []
-            cellViewModels = []
-            selectedCategory = category
-        }
+        checkIfFirstPage(category: category, page: page)
         pagination = page
         
         fetchUseCase
@@ -57,7 +53,7 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
     
-    func loadMoreIfNeeded(currentItemID: UUID) {
+    func loadMoreIfNeeded(currentItemID: String) {
         guard let last = cellViewModels.last,
               last.id == currentItemID
         else { return }
@@ -65,10 +61,18 @@ class HomeViewModel: ObservableObject {
                       page: pagination + 1)
     }
     
-    func remove(_ id: UUID) {
+    func remove(_ id: String) {
         if let idx = articles.firstIndex(where: { $0.id == id }) {
             articles.remove(at: idx)
         }
         cellViewModels.removeAll { $0.id == id }
+    }
+    
+    func checkIfFirstPage(category: NewsQuery.Category, page: Int) {
+        if page == 1 {
+            articles = []
+            cellViewModels = []
+            selectedCategory = category
+        }
     }
 }

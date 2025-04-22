@@ -8,6 +8,5 @@
 import Combine
 
 protocol ArticleRemoteDataSource {
-    func getTopHeadlines(category:String, page:Int)
-    -> AnyPublisher<[ArticleDTO.Article],NetworkError>
+    func getTopHeadlines(category: String, page:Int) -> AnyPublisher<[ArticleDTO.Article],NetworkError>
 }

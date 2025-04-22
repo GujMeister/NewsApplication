@@ -25,7 +25,7 @@ final class Network: NetworkService {
     
     @Injected private var responseValidator: ResponseValidating
     
-    func executeNetworkCall<Result : Decodable>(
+    func executeNetworkCall<Result: Decodable>(
         path: String,
         queryItems: [URLQueryItem] = [],
         responseType: Result.Type

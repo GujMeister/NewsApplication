@@ -8,11 +8,6 @@
 import Foundation
 
 struct ArticleMapper {
-    private let isoFormatter: ISO8601DateFormatter = {
-        let f = ISO8601DateFormatter()
-        return f
-    }()
-    
     func toDomain(_ dto: ArticleDTO.Article) -> Article? {
         guard
             let author      = dto.author,
@@ -24,7 +19,7 @@ struct ArticleMapper {
         
         guard let imageURL = URL(string: imageURLStr) else { return nil }
         
-        guard let publishedDate = isoFormatter.date(from: dateStr) else { return nil }
+        guard let publishedDate = ISO8601DateFormatter().date(from: dateStr) else { return nil }
         
         return Article(
             author:      author,

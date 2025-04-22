@@ -8,6 +8,5 @@
 import Combine
 
 protocol FetchArticlesUseCase {
-    func execute(category: String, page: Int)
-    -> AnyPublisher<[Article], NetworkError>
+    func execute(category: String, page: Int) -> AnyPublisher<[Article], NetworkError>
 }
