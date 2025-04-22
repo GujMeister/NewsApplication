@@ -9,24 +9,6 @@ import Foundation
 import Combine
 import Resolver
 
-//final class LocalArticleDataSource: ArticleDataSource {
-//    func getTopHeadlines(category: String, page: Int) -> AnyPublisher<[ArticleDTO.Article], NetworkError> {
-//        Just(
-//            [
-//                .init(
-//                    author: "author 1",
-//                    title: "title 1",
-//                    urlImage: "",
-//                    publishedAt: .init(),
-//                    content: "lorem ipusm dolor sit amet consectetur adipiscing elit ut aliquam purus sit amet luctus"
-//                )
-//            ]
-//        )
-//            .setFailureType(to: NetworkError.self)
-//            .eraseToAnyPublisher()
-//    }
-//}
-
 final class RemoteArticleDataSource: ArticleDataSource {
     
     @Injected
