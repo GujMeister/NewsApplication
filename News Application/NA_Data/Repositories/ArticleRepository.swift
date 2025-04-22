@@ -11,11 +11,11 @@ import Resolver
 struct ArticleRepository: ArticleRepositoryProtocol {
     
     @Injected
-    private var remote: ArticleDataSource
+    private var dataSource: ArticleDataSource
     private let mapper = ArticleMapper()
     
     func getTopHeadlines(category: String, page: Int) -> AnyPublisher<[Article], NetworkError> {
-        return remote.getTopHeadlines(category: category, page: page)
+        return dataSource.getTopHeadlines(category: category, page: page)
             .compactMap { $0.compactMap(self.mapper.toDomain) }
             .eraseToAnyPublisher()
     }
