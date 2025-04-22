@@ -52,18 +52,26 @@ struct HomeView: View {
 // MARK: - Extension
 
 extension HomeView {
-    
-    // MARK: Header View
-    
     private var HeaderView: some View {
-        VStack(spacing: 12) {
+        let titles = NewsQuery.Category.allCasesString
+        let selectedTitle = Binding<String>(
+            get: { vm.selectedCategory.rawValue },
+            set: { newRaw in
+                if let cat = NewsQuery.Category(rawValue: newRaw) {
+                    vm.selectedCategory = cat
+                }
+            }
+        )
+
+        return VStack(spacing: 12) {
             Text("Top Story")
                 .font(.largeTitle).bold()
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 16)
+
             CategoryMenuView(
-                categories: NewsQuery.Category.allCases,
-                selectedCategory: $vm.selectedCategory
+                categories: titles,
+                selectedCategory: selectedTitle
             )
         }
         .background(Color(.systemBackground))

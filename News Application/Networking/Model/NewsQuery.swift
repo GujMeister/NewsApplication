@@ -13,13 +13,13 @@ struct NewsQuery {
     let page: Int?
     
     enum Category: String {
-        case general
-        case business
-        case entertainment
-        case health
-        case science
-        case sports
-        case technology
+        case general = "General"
+        case business = "Business"
+        case entertainment = "Entertainment"
+        case health = "Health"
+        case science = "Science"
+        case sports = "Sports"
+        case technology = "Technology"
     }
     
     init(country: String? = "us",
@@ -47,5 +47,19 @@ struct NewsQuery {
         }
         
         return items
+    }
+}
+
+// MARK: NewsQuery Extension (Used only for preview) (Is it cool to do it like that?)
+
+extension NewsQuery.Category: CaseIterable, Identifiable {
+    var id: String { self.rawValue }
+    
+    static var allCases: [NewsQuery.Category] {
+        return [.general, .business, .entertainment, .health, .science, .sports, .technology]
+    }
+    
+    static var allCasesString: [String] {
+        allCases.map { $0.rawValue }
     }
 }
