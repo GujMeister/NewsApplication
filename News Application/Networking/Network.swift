@@ -44,6 +44,9 @@ final class Network: NetworkService {
         }
         
         let request = URLRequest(url: url)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        
         print("Making request to: \(request)")
         return URLSession.shared
             .dataTaskPublisher(for: request)
@@ -51,7 +54,7 @@ final class Network: NetworkService {
                 try validator.validate(response)
                 return data
             }
-            .decode(type: Result.self, decoder: JSONDecoder())
+            .decode(type: Result.self, decoder: decoder)
             .mapError { error in
                 switch error {
                 case let decoding as DecodingError :   return .decodingError(decoding)
