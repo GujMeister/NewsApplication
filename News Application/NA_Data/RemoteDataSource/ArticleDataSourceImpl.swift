@@ -1,5 +1,5 @@
 //
-//  ArticleRemoteDataSourceImpl.swift
+//  ArticleDataSourceImpl.swift
 //  News Application
 //
 //  Created by Luka Gujejiani on 17.04.25.
@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import Resolver
 
-struct ArticleRemoteDataSourceImpl: ArticleRemoteDataSource {
+struct ArticleDataSourceImpl: ArticleDataSource {
     
     @Injected
     private var network: NetworkService
