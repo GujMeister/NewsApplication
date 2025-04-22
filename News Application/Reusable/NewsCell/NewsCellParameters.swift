@@ -12,23 +12,11 @@ import SwiftUI
 extension NewsCell {
     struct Parameters: Equatable {
         let title: String
-        let URL: URL
-        let image: Image
+        let image: URL
         
-        public init(title: String, URL: URL, image: Image) {
+        public init(title: String, image: URL) {
             self.title = title
-            self.URL   = URL
             self.image = image
         }
-    }
-}
-
-// MARK: - Loading State
-
-extension NewsCell {
-    enum LoadingState {
-        case loading
-        case loaded(Image)
-        case failed
     }
 }

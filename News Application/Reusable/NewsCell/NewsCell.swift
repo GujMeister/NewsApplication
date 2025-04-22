@@ -6,53 +6,82 @@
 //
 
 import SwiftUI
+import Resolver
+import Combine
 
 struct NewsCell: View {
     
     // MARK: Properties
     
-    @StateObject var vm: NewsCellViewModel
-    @EnvironmentObject private var homeVM: HomeViewModel
+    let parameters: Parameters
+    @Injected private var imageService: ImageFetching
+    @State private var image: Image? = nil
+    @State private var cancellable: AnyCancellable? = nil
     
     // MARK: Init
     
-    init(vm: NewsCellViewModel) {
-        _vm = StateObject(wrappedValue: vm)
+    init(parameters: Parameters) {
+        self.parameters = parameters
     }
     
     // MARK: Body
     
     var body: some View {
+        Group {
+            if let imageToShow = image {
+                post(imageToShow: imageToShow)
+            } else {
+                shimmering()
+            }
+        }
+        .padding()
+        .onAppear(perform: loadImage)
+    }
+    
+    // MARK: Image Loading
+    
+    private func loadImage() {
+        guard image == nil else { return }
+        cancellable = imageService
+            .fetchImage(from: parameters.image)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { completion in
+                    
+                },
+                receiveValue: { fetched in
+                    image = fetched
+                }
+            )
+    }
+}
+
+// MARK: - ViewBuilders
+
+private extension NewsCell {
+    
+    @ViewBuilder
+    func shimmering() -> some View {
+        RoundedRectangle(cornerRadius: 25)
+            .fill(Color.gray.opacity(0.3))
+            .frame(height: 200)
+            .shimmering()
+    }
+    
+    @ViewBuilder
+    func post(imageToShow: Image) -> some View {
         VStack {
-            switch vm.state {
-            case .loading:
-                RoundedRectangle(cornerRadius: 25)
-                    .fill(Color.gray.opacity(0.3))
-                    .frame(height: 200)
-                    .shimmering()
-                    .padding()
-                
-            case .loaded(let image):
-                image
+            if imageToShow != Image(systemName: "exclamationmark.triangle.fill") {
+                imageToShow
                     .resizable()
                     .scaledToFit()
+                    .clipped()
                     .cornerRadius(25)
-                    .padding()
-                
-            case .failed:
-                Color.clear
-                    .onAppear {
-                        homeVM.remove(vm.id)
-                    }
             }
             
-            Text(vm.title)
+            Text(parameters.title)
                 .font(.headline)
-                .padding(.horizontal)
-        }
-        .padding(.vertical, 8)
-        .onChange(of: vm.id) {
-            vm.loadImage()
+                .bold()
         }
     }
 }

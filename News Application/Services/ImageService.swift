@@ -10,7 +10,7 @@ import SwiftUI
 import Resolver
 
 protocol ImageFetching {
-    func fetchImage(from url: URL) -> AnyPublisher<Image, Never>
+    func fetchImage(from url: URL) -> AnyPublisher<Image, NetworkError>
 }
 
 final class ImageService: ImageFetching {
@@ -22,19 +22,17 @@ final class ImageService: ImageFetching {
         return URLSession(configuration: config)
     }()
 
-    func fetchImage(from url: URL) -> AnyPublisher<Image, Never> {
+    func fetchImage(from url: URL) -> AnyPublisher<Image, NetworkError> {
         let urlString = url.absoluteString
         guard let encodedString = urlString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
               let safeURL = URL(string: encodedString) else {
-//            return Fail(error: NetworkError.badResponse)
-//                .eraseToAnyPublisher()
-            return Just(Image(systemName: "exclamationmark.triangle.fill"))
+            return Fail(error: NetworkError.badResponse)
                 .eraseToAnyPublisher()
         }
 
         return session
             .dataTaskPublisher(for: safeURL)
-            .timeout(.seconds(5), scheduler: DispatchQueue.global(), customError: { URLError(.timedOut) })
+            .timeout(.seconds(3), scheduler: DispatchQueue.global(), customError: { URLError(.timedOut) })
             .retry(1)
             .tryMap { data, response in
                 try self.responseValidator.validate(response)
@@ -45,6 +43,7 @@ final class ImageService: ImageFetching {
             }
             .replaceError(with: Image(systemName: "exclamationmark.triangle.fill"))
             .receive(on: DispatchQueue.main)
+            .setFailureType(to: NetworkError.self)
             .eraseToAnyPublisher()
     }
 }

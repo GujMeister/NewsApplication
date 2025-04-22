@@ -21,14 +21,14 @@ struct HomeView: View {
                 HeaderView
                 
                 List {
-                    ForEach(vm.cellViewModels) { viewModel in
+                    ForEach(vm.articles) { article in
                         NavigationLink {
-                            DetailsView(vm: DetailsViewModel(article: viewModel.article))
+                            DetailsView(vm: DetailsViewModel(article: article))
                         } label: {
-                            NewsCell(vm: viewModel)
+                            NewsCell(parameters: .init(title: article.title, image: article.imageURL))
                                 .listRowSeparator(.hidden)
                                 .onAppear {
-                                    vm.loadMoreIfNeeded(currentItemID: viewModel.id)
+                                    vm.loadMoreIfNeeded(currentItemID: article.id)
                                 }
                         }
                     }
